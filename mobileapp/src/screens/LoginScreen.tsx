@@ -7,6 +7,9 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Keyboard,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import CustomTextInput from '../component/CustomTextInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -53,7 +56,7 @@ const LoginScreen = ({navigation}: any) => {
         },
       });
       setLoading(false);
-      const {success, message, error} = data;
+      const {success, message} = data;
 
       if (success) {
         await AsyncStorage.setItem('userToken', data.jwtToken);
@@ -75,6 +78,7 @@ const LoginScreen = ({navigation}: any) => {
         });
       }
     } catch (err) {
+      setLoading(false);
       showMessage({
         message: 'API Error!',
         description: 'Something went wrong. Please try again',
@@ -85,70 +89,84 @@ const LoginScreen = ({navigation}: any) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Welcome Back 👋</Text>
-        <Text style={styles.subtitle}>Login to your account</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled">
+          <Text style={styles.title}>Welcome Back 👋</Text>
+          <Text style={styles.subtitle}>Login to your account</Text>
 
-        <CustomTextInput
-          label="Email"
-          value={email}
-          onChangeText={text => {
-            setEmail(text);
-            if (!text.trim()) {
-              setErrors(prev => ({...prev, email: 'Email is required'}));
-            } else if (!/^\S+@\S+\.\S+$/.test(text)) {
-              setErrors(prev => ({
-                ...prev,
-                email: 'Enter a valid email address',
-              }));
-            } else {
-              setErrors(prev => ({...prev, email: undefined}));
-            }
-          }}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={!!errors.email}
-        />
-        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+          <CustomTextInput
+            label="Email"
+            value={email}
+            onChangeText={text => {
+              setEmail(text.toLocaleLowerCase());
+              if (!text.trim()) {
+                setErrors(prev => ({...prev, email: 'Email is required'}));
+              } else if (!/^\S+@\S+\.\S+$/.test(text)) {
+                setErrors(prev => ({
+                  ...prev,
+                  email: 'Enter a valid email address',
+                }));
+              } else {
+                setErrors(prev => ({...prev, email: undefined}));
+              }
+            }}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            error={!!errors.email}
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
-        <CustomTextInput
-          label="Password"
-          value={password}
-          onChangeText={text => {
-            setPassword(text);
-            if (errors.password)
-              setErrors(prev => ({...prev, password: undefined}));
-          }}
-          secureTextEntry
-          error={!!errors.password}
-        />
-        {errors.password && (
-          <Text style={styles.errorText}>{errors.password}</Text>
-        )}
+          <CustomTextInput
+            label="Password"
+            value={password}
+            onChangeText={(text: string) => {
+              setPassword(text);
 
-        <TouchableOpacity
-          style={[styles.button, loading && styles.disabledButton]}
-          onPress={handleLogin}
-          disabled={loading}>
-          {loading ? (
-            <ActivityIndicator color="#fff" size="small" />
-          ) : (
-            <Text style={styles.buttonText}>Login</Text>
+              if (!text.trim()) {
+                setErrors(prev => ({
+                  ...prev,
+                  password: 'Password is required',
+                }));
+              } else if (text.length < 6) {
+                setErrors(prev => ({
+                  ...prev,
+                  password: 'Password must be at least 6 characters',
+                }));
+              } else {
+                setErrors(prev => ({...prev, password: undefined}));
+              }
+            }}
+            secureTextEntry
+            error={!!errors.password}
+          />
+          {errors.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
           )}
-        </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.linkText}>
-            Don’t have an account? <Text style={styles.link}>Sign up</Text>
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <TouchableOpacity
+            style={[styles.button, loading && styles.disabledButton]}
+            onPress={handleLogin}
+            disabled={loading}>
+            {loading ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <Text style={styles.buttonText}>Login</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.linkText}>
+              Don’t have an account? <Text style={styles.link}>Sign up</Text>
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

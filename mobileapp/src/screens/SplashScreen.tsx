@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const spl = require('../../assets/spl.json');
 
 const SplashScreen = ({navigation}: any) => {
-  
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
@@ -30,8 +29,7 @@ const SplashScreen = ({navigation}: any) => {
     <View style={styles.container}>
       <LottieView source={spl} autoPlay loop style={styles.lottie} />
 
-              <Text style={styles.buttonText}>Mobile App</Text>
-      
+      <Text style={styles.buttonText}>Mobile App</Text>
     </View>
   );
 };
@@ -46,6 +44,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   lottie: {width: 300, height: 100},
-   buttonText: {color: '#124573', fontSize: 28,fontWeight:'bold',marginTop:20},
-
+  buttonText: {
+    color: '#124573',
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
 });

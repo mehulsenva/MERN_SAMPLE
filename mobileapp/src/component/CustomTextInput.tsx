@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  View, TextInput, Animated,
-  TouchableOpacity, StyleSheet, Text, TextInputProps
+  View,
+  TextInput,
+  Animated,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  TextInputProps,
+  Dimensions,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+const {width} = Dimensions.get('window'); // Get screen width for responsive sizing
 
 interface CustomTextInputProps extends TextInputProps {
   label: string;
@@ -35,22 +43,18 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     }).start();
   }, [isFocused, value]);
 
-  const borderColor = error
-    ? 'red'
-    : isFocused
-    ? '#2da07b'
-    : '#ccc';
+  const borderColor = error ? 'red' : isFocused ? '#2da07b' : '#ccc';
 
   return (
     <View style={styles.wrapper}>
-      <View style={[styles.container, { borderColor }]}>
+      <View style={[styles.container, {borderColor}]}>
         <Animated.Text
           style={[
             styles.label,
             {
               top: animatedLabel.interpolate({
                 inputRange: [0, 1],
-                outputRange: [22, 6],
+                outputRange: [20, 6],
               }),
               fontSize: animatedLabel.interpolate({
                 inputRange: [0, 1],
@@ -58,8 +62,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
               }),
               color: error ? 'red' : isFocused ? '#2da07b' : '#999',
             },
-          ]}
-        >
+          ]}>
           {label}
         </Animated.Text>
 
@@ -76,11 +79,10 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
         {secureTextEntry && (
           <TouchableOpacity
             onPress={() => setPasswordVisible(!passwordVisible)}
-            style={styles.eyeIcon}
-          >
+            style={styles.eyeIcon}>
             <MaterialIcons
               name={passwordVisible ? 'visibility' : 'visibility-off'}
-              size={22}
+              size={20}
               color="#999"
             />
           </TouchableOpacity>
@@ -97,32 +99,34 @@ export default CustomTextInput;
 const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   container: {
     borderWidth: 1.5,
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 12,
-    paddingTop: 18,
+    paddingTop: 16,
     backgroundColor: '#fafafa',
+    width: width * 0.9,
+    alignSelf: 'center',
   },
   label: {
     position: 'absolute',
-    left: 14,
+    left: 12,
     backgroundColor: '#fafafa',
     paddingHorizontal: 4,
   },
   input: {
-    height: 50,
+    height: 45,
     fontSize: 16,
     color: '#333',
-    paddingTop: 18,
-    paddingRight: 35,
+    paddingTop: 16,
+    paddingRight: 40,
   },
   eyeIcon: {
     position: 'absolute',
     right: 10,
-    top: 22,
+    top: 18,
   },
   errorText: {
     color: 'red',

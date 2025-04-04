@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   FlatList,
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import {apiRequest} from '../services/apiRequest';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -51,6 +53,8 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{flex: 0, backgroundColor: '#2da07b'}} />
+      <StatusBar backgroundColor="#2da07b" />
       <Header
         title="Home"
         leftIconName="menu"
@@ -80,7 +84,7 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#f5f5f5', padding: 10},
+  container: {flex: 1, backgroundColor: '#f5f5f5'},
   loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'}, // Centering loader
   card: {
     backgroundColor: '#fff',
