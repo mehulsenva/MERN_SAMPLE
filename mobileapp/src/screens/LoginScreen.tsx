@@ -8,7 +8,6 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import Toast from 'react-native-toast-message';
 import CustomTextInput from '../component/CustomTextInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiRequest} from '../services/apiRequest';
@@ -148,8 +147,6 @@ const LoginScreen = ({navigation}: any) => {
             Don’t have an account? <Text style={styles.link}>Sign up</Text>
           </Text>
         </TouchableOpacity>
-
-        <Toast />
       </ScrollView>
     </KeyboardAvoidingView>
   );
