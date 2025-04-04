@@ -75,18 +75,18 @@ jobs:
       - name: Build iOS App
         run: |
           cd mobileapp/ios
-          xcodebuild -workspace YourApp.xcworkspace \
-                     -scheme YourApp \
+          xcodebuild -workspace mobileapp.xcworkspace \
+                     -scheme mobileapp \
                      -sdk iphoneos \
                      -configuration Release \
-                     -archivePath $PWD/build/YourApp.xcarchive \
+                     -archivePath $PWD/build/mobileapp.xcarchive \
                      archive
 
       - name: Export iOS IPA
         run: |
           cd mobileapp/ios
           xcodebuild -exportArchive \
-                     -archivePath $PWD/build/YourApp.xcarchive \
+                     -archivePath $PWD/build/mobileapp.xcarchive \
                      -exportOptionsPlist exportOptions.plist \
                      -exportPath $PWD/build
 
@@ -94,4 +94,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: mobileapp/ios/build/YourApp.ipa
+          path: mobileapp/ios/build/mobileapp.ipa
