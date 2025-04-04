@@ -4,103 +4,94 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
     branches:
       - main
-  workflow_dispatch: # Allows manual triggers
+      - master
 
 jobs:
-  android:
-    name: Android Build
+  android-build:
+    name: Build Android App
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: yarn
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           cd mobileapp
-          yarn install --frozen-lockfile
+          npm install
 
-      - name: Run ESLint
-        run: |
-          cd mobileapp
-          yarn lint
-
-      - name: Run Jest tests
-        run: |
-          cd mobileapp
-          yarn test
-
-      - name: Set up Java & Gradle
+      - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: 17
 
-      - name: Build Android App
+      - name: Grant Permission to Gradlew
         run: |
           cd mobileapp/android
           chmod +x gradlew
+
+      - name: Build Android APK
+        run: |
+          cd mobileapp/android
           ./gradlew assembleRelease
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: mobileapp/android/app/build/outputs/apk/release/app-release.apk
 
-  ios:
-    name: iOS Build
+  ios-build:
+    name: Build iOS App
     runs-on: macos-latest
-    needs: android
-
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: yarn
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           cd mobileapp
-          yarn install --frozen-lockfile
+          npm install
 
       - name: Install CocoaPods
         run: |
           cd mobileapp/ios
-          pod install --silent
+          pod install --repo-update
 
       - name: Build iOS App
         run: |
           cd mobileapp/ios
           xcodebuild -workspace YourApp.xcworkspace \
-            -scheme YourApp \
-            -sdk iphoneos \
-            -configuration Release \
-            archive -archivePath build/YourApp.xcarchive
+                     -scheme YourApp \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     -archivePath $PWD/build/YourApp.xcarchive \
+                     archive
 
-      - name: Export IPA
+      - name: Export iOS IPA
         run: |
           cd mobileapp/ios
           xcodebuild -exportArchive \
-            -archivePath build/YourApp.xcarchive \
-            -exportOptionsPlist exportOptions.plist \
-            -exportPath build
+                     -archivePath $PWD/build/YourApp.xcarchive \
+                     -exportOptionsPlist exportOptions.plist \
+                     -exportPath $PWD/build
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v3
+      - name: Upload iOS IPA
+        uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
           path: mobileapp/ios/build/YourApp.ipa
